@@ -20,7 +20,6 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoinListener {
 
     public ArrayList<Coin> coins = new ArrayList<>();
-
     private ThreadPoolExecutor executorPool;
     private Handler mHandler;
     private Button reloadButton;
@@ -57,19 +56,17 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
     }
 
     public void reload() {
-        executerPool.execute(new MakeApiCall(this.numOfCoins));
+        this.executorPool.execute(new MakeApiCall(this.numOfCoins));
     }
 
 
     public void addMoreCoins() {
-        this.numOfCoins += 10;
+        numOfCoins += 10;
         reload();
     }
 
     @Override
     public void onClick(int position) {
-        //TODO complete this method
-
 
     }
 }
