@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
     private Handler mHandler;
     private Button reloadButton;
     private Button moreCoinsButton;
-
+    private int numOfCoins = 10;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,8 +40,30 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
 
         this.executorPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(5);
         this.mHandler = new Handler();
-        this.reloadButton = findViewById(R.id.reloadBtn);
-        this.moreCoinsButton = findViewById(R.id.moreCoinsBtn);
+        this.reloadButton = (Button) findViewById(R.id.reloadBtn);
+        this.moreCoinsButton = (Button) findViewById(R.id.moreCoinsBtn);
+        reloadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                reload();
+            }
+        });
+        moreCoinsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addMoreCoins();
+            }
+        });
+    }
+
+    public void reload() {
+        executerPool.execute(new MakeApiCall(this.numOfCoins));
+    }
+
+
+    public void addMoreCoins() {
+        this.numOfCoins += 10;
+        reload();
     }
 
     @Override
