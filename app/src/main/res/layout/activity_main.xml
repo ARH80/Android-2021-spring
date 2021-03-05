@@ -40,12 +40,4 @@
         app:layout_constraintTop_toTopOf="@+id/reloadBtn"
         app:layout_constraintVertical_bias="1.0" />
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        tools:layout_editor_absoluteX="165dp"
-        tools:layout_editor_absoluteY="288dp" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
