@@ -37,6 +37,11 @@ public class CoinAdaptor extends RecyclerView.Adapter<CoinAdaptor.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Coin coin = data.get(position);
         //TODO: complete onBindViewHolder method in Coin adaptor
+        holder.coinFullNameTxt.setText(coin.fullName);
+        holder.coinCurrentPrice.setText(String.valueOf(coin.currentPrice));
+        holder.coin1HChange.setText(String.valueOf(coin.percentageChange_1h));
+        holder.coin24Volume.setText(String.valueOf(coin.percentageChange_24h));
+        holder.coin24Volume.setText(String.valueOf(coin.percentageChange_7d));
         //holder.coinFullNameTxt.setText();
         //holder.coinCurrentPrice.setText();
         //holder.coin24Volume.setText();
@@ -89,5 +94,9 @@ public class CoinAdaptor extends RecyclerView.Adapter<CoinAdaptor.ViewHolder> {
 
     public interface OnCoinListener {
         void onClick(int position);
+    }
+
+    public void setData(ArrayList<Coin> data) {
+        this.data = data;
     }
 }

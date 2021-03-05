@@ -39,8 +39,9 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
     private ThreadPoolExecutor executorPool;
     private Button reloadButton;
     private Button moreCoinsButton;
-    public TextView result;
+    private TextView result;
     private MakeApiCall makeApiCall;
+    private CoinAdaptor coinAdaptor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
         RecyclerView coinsRecyclerView = findViewById(R.id.coin_recyclerView);
         coinsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         //TODO coins array list need to be initialized
-        CoinAdaptor coinAdaptor = new CoinAdaptor(coins, this, this);
+        this.coinAdaptor = new CoinAdaptor(coins, this, this);
         coinsRecyclerView.addItemDecoration(new DividerItemDecoration(coinsRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
         coinsRecyclerView.setAdapter(coinAdaptor);
 
@@ -113,7 +114,9 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
                     break;
                 case 1:
                     if (mWeakRefContext != null && mWeakRefContext.get() != null){
-                        result.setText(Arrays.toString(coins.toArray())); // this is just for test
+//                        result.setText(Arrays.toString(coins.toArray())); // this is just for test
+                        coinAdaptor.setData(coins);
+                        coinAdaptor.notifyDataSetChanged();
                         Toast.makeText(mWeakRefContext.get(), "Coins are updated", Toast.LENGTH_SHORT).show();
                     }
                     break;
