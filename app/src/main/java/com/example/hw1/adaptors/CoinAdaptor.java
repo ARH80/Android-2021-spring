@@ -40,8 +40,8 @@ public class CoinAdaptor extends RecyclerView.Adapter<CoinAdaptor.ViewHolder> {
         holder.coinFullNameTxt.setText(coin.fullName);
         holder.coinCurrentPrice.setText(String.valueOf(coin.currentPrice));
         holder.coin1HChange.setText(String.valueOf(coin.percentageChange_1h));
-        holder.coin24Volume.setText(String.valueOf(coin.percentageChange_24h));
-        holder.coin24Volume.setText(String.valueOf(coin.percentageChange_7d));
+        holder.coin1DChange.setText(String.valueOf(coin.percentageChange_24h));
+        holder.coin1WChange.setText(String.valueOf(coin.percentageChange_7d));
         //holder.coinFullNameTxt.setText();
         //holder.coinCurrentPrice.setText();
         //holder.coin24Volume.setText();

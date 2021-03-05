@@ -30,7 +30,7 @@ public class CustomHandlerThread extends HandlerThread {
         }
     }
 
-    public void postRunnable(Runnable runnable){
+    public void postRunnable(Runnable runnable) {
         if(customHandler != null) {
             customHandler.post(runnable);
         }

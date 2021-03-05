@@ -57,8 +57,8 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
         this.executorPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(5);
         this.mHandler = new UiHandler();
         this.mHandler.setContext(this);
-        this.reloadButton = (Button) findViewById(R.id.reloadBtn);
-        this.moreCoinsButton = (Button) findViewById(R.id.moreCoinsBtn);
+        this.reloadButton = findViewById(R.id.reloadBtn);
+        this.moreCoinsButton = findViewById(R.id.moreCoinsBtn);
         this.makeApiCall = new MakeApiCall(this, mHandler, this);
         result = (TextView) findViewById(R.id.textView);
         reloadButton.setOnClickListener(new View.OnClickListener() {

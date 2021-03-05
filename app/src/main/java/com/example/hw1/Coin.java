@@ -10,6 +10,7 @@ public class Coin {
     public double percentageChange_24h;
     public double percentageChange_7d;
 
+
     public Coin(int id, String fullName, String symbol, double currentPrice, double percentageChange_1h,
                 double percentageChange_24h, double percentageChange_7d) {
         this.id = id;
