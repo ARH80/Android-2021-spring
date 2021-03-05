@@ -12,24 +12,35 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import com.example.hw1.adaptors.CoinAdaptor;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoinListener {
 
-    public ArrayList<Coin> coins = new ArrayList<>();
+    private ArrayList<Coin> coins = new ArrayList<>();
     private UiHandler mHandler;
     private ThreadPoolExecutor executorPool;
     private Button reloadButton;
     private Button moreCoinsButton;
-    private int numOfCoins = 10;
+    public TextView result;
+    private MakeApiCall makeApiCall;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,9 +55,11 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
 
         this.executorPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(5);
         this.mHandler = new UiHandler();
-        mHandler.setContext(this);
+        this.mHandler.setContext(this);
         this.reloadButton = (Button) findViewById(R.id.reloadBtn);
         this.moreCoinsButton = (Button) findViewById(R.id.moreCoinsBtn);
+        this.makeApiCall = new MakeApiCall(this, mHandler, this);
+        result = (TextView) findViewById(R.id.textView);
         reloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -64,12 +77,12 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
     }
 
     public void reload() {
-            this.executorPool.execute(new MakeApiCall(numOfCoins, mHandler, this));
+        executorPool.execute(makeApiCall);
     }
 
 
     public void addMoreCoins() {
-        numOfCoins += 10;
+        makeApiCall.addMoreCoins();
         reload();
     }
 
@@ -78,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
 
     }
 
-    private static class UiHandler extends Handler{
+    private class UiHandler extends Handler{
         private WeakReference<Context> mWeakRefContext;
 
         public void setContext(Context context) {
@@ -95,9 +108,24 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
             switch (msg.what) {
                 case -1:
                     if (mWeakRefContext != null && mWeakRefContext.get() != null){
-
+                        Toast.makeText(mWeakRefContext.get(), "Couldn't reach server", Toast.LENGTH_SHORT).show();
                     }
+                    break;
+                case 1:
+                    if (mWeakRefContext != null && mWeakRefContext.get() != null){
+                        result.setText(Arrays.toString(coins.toArray())); // this is just for test
+                        Toast.makeText(mWeakRefContext.get(), "Coins are updated", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
             }
         }
+    }
+
+    public ArrayList<Coin> getCoins() {
+        return coins;
+    }
+
+    public void setCoins(ArrayList<Coin> coins) {
+        this.coins = coins;
     }
 }
