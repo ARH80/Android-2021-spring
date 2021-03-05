@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -36,7 +37,7 @@ public class MakeApiCall implements Runnable{
     private OkHttpClient okHttpClient = new OkHttpClient.Builder().callTimeout(5, TimeUnit.SECONDS).build();
 
     public MakeApiCall(MainActivity mainActivity, Handler uiHandler, Context context) {
-
+        this.mainActivity = mainActivity;
         this.uiHandler = uiHandler;
         this.context = context;
     }
@@ -68,7 +69,7 @@ public class MakeApiCall implements Runnable{
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try {
-                    ArrayList<Coin> coins = new ArrayList<>();
+                    ArrayList<Coin> coins = mainActivity.getCoins();
                     JSONObject root = new JSONObject(response.body().string());
                     JSONArray data = root.getJSONArray("data");
                     for (int i = 0; i < data.length(); i++) {

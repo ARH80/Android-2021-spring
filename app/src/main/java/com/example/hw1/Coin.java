@@ -21,5 +21,16 @@ public class Coin {
         this.percentageChange_7d = percentageChange_7d;
     }
 
-
+    @Override
+    public String toString() {
+        return "Coin{" +
+                "id=" + id +
+                ", fullName='" + fullName + '\'' +
+                ", symbol='" + symbol + '\'' +
+                ", currentPrice=" + currentPrice +
+                ", percentageChange_1h=" + percentageChange_1h +
+                ", percentageChange_24h=" + percentageChange_24h +
+                ", percentageChange_7d=" + percentageChange_7d +
+                '}';
+    }
 }
