@@ -40,23 +40,17 @@ public class CoinAdaptor extends RecyclerView.Adapter<CoinAdaptor.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Coin coin = data.get(position);
         //TODO: complete onBindViewHolder method in Coin adaptor
-        holder.coinFullNameTxt.setText(coin.fullName);
-        holder.coinCurrentPrice.setText(String.valueOf(coin.currentPrice));
-        holder.coin1HChange.setText(String.valueOf(coin.percentageChange_1h));
-        holder.coin24Volume.setText(String.valueOf(coin.percentageChange_24h));
-        holder.coin24Volume.setText(String.valueOf(coin.percentageChange_7d));
-        Glide.with(context)
-                .load(coin.imgUrl)
-                .into(holder.coinImage);
-        //holder.coinFullNameTxt.setText();
-        //holder.coinCurrentPrice.setText();
+        holder.coinFullNameTxt.setText(coin.fullName + " (" + coin.symbol + ")");
+        holder.coinCurrentPrice.setText("Price: $" + String.format("%.3f", coin.currentPrice));
+        holder.coin1HChange.setText("1h: " + String.format("%.3f", coin.percentageChange_1h) + "%");
+        holder.coin1DChange.setText("24h: " + String.format("%.3f", coin.percentageChange_24h) + "%");
+        holder.coin1WChange.setText("7d: " + String.format("%.3f", coin.percentageChange_7d) + "%");
+        holder.coinRank.setText(String.valueOf(coin.rank));
+        Glide.with(context).load(coin.imgUrl).into(holder.coinImage);
+
         //holder.coin24Volume.setText();
         //holder.coinMarketCap.setText();
-        //holder.coin1HChange.setText();
-        //holder.coin1DChange.setText();
-        //holder.coin1WChange.setText();
-        //holder.coinRank.setText();
-        //holder.coinImage
+
     }
 
     @Override

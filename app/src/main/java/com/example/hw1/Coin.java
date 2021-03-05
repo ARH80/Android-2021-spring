@@ -10,11 +10,13 @@ public class Coin {
     public double percentageChange_24h;
     public double percentageChange_7d;
     public String imgUrl;
+    public int rank;
 
 
     public Coin(int id, String fullName, String symbol, double currentPrice, double percentageChange_1h,
-                double percentageChange_24h, double percentageChange_7d) {
+                double percentageChange_24h, double percentageChange_7d, int rank) {
         this.id = id;
+        this.rank = rank;
         this.fullName = fullName;
         this.symbol = symbol;
         this.currentPrice = currentPrice;

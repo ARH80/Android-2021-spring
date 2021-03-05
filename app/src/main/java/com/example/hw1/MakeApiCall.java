@@ -83,7 +83,8 @@ public class MakeApiCall implements Runnable{
                         double percentage_change_1h = USD.getDouble("percent_change_1h");
                         double percent_change_24h = USD.getDouble("percent_change_24h");
                         double percent_change_7d = USD.getDouble("percent_change_7d");
-                        Coin coin = new Coin(id, name, symbol, price, percentage_change_1h, percent_change_24h, percent_change_7d);
+                        int rank = jsonObject.getInt("cmc_rank");
+                        Coin coin = new Coin(id, name, symbol, price, percentage_change_1h, percent_change_24h, percent_change_7d, rank);
                         coins.add(coin);
                     }
                     mainActivity.setCoins(coins);

@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
         this.reloadButton = findViewById(R.id.reloadBtn);
         this.moreCoinsButton = findViewById(R.id.moreCoinsBtn);
         this.makeApiCall = new MakeApiCall(this, mHandler, this);
-        result = (TextView) findViewById(R.id.textView);
         reloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
