@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.hw1.Coin;
 import com.example.hw1.R;
 
@@ -20,10 +21,12 @@ public class CoinAdaptor extends RecyclerView.Adapter<CoinAdaptor.ViewHolder> {
     private ArrayList<Coin> data;
     private LayoutInflater inflater;
     private OnCoinListener listener;
+    private Context context;
 
     public CoinAdaptor(ArrayList<Coin> data, Context context, OnCoinListener listener) {
         this.data = data;
         this.listener = listener;
+        this.context = context;
         this.inflater = LayoutInflater.from(context);
     }
 
@@ -38,10 +41,13 @@ public class CoinAdaptor extends RecyclerView.Adapter<CoinAdaptor.ViewHolder> {
         Coin coin = data.get(position);
         //TODO: complete onBindViewHolder method in Coin adaptor
         holder.coinFullNameTxt.setText(coin.fullName);
-        holder.coinCurrentPrice.setText("Price: $" + String.valueOf(coin.currentPrice));
-        holder.coin1HChange.setText("1h: " + String.valueOf(coin.percentageChange_1h) + "%");
-        holder.coin1DChange.setText("24h: " + String.valueOf(coin.percentageChange_24h) + "%");
-        holder.coin1WChange.setText("7d: " + String.valueOf(coin.percentageChange_7d) + "%");
+        holder.coinCurrentPrice.setText(String.valueOf(coin.currentPrice));
+        holder.coin1HChange.setText(String.valueOf(coin.percentageChange_1h));
+        holder.coin24Volume.setText(String.valueOf(coin.percentageChange_24h));
+        holder.coin24Volume.setText(String.valueOf(coin.percentageChange_7d));
+        Glide.with(context)
+                .load(coin.imgUrl)
+                .into(holder.coinImage);
         //holder.coinFullNameTxt.setText();
         //holder.coinCurrentPrice.setText();
         //holder.coin24Volume.setText();

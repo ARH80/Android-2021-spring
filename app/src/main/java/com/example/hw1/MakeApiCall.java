@@ -70,6 +70,7 @@ public class MakeApiCall implements Runnable{
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try {
                     ArrayList<Coin> coins = mainActivity.getCoins();
+                    coins.clear();
                     JSONObject root = new JSONObject(response.body().string());
                     JSONArray data = root.getJSONArray("data");
                     for (int i = 0; i < data.length(); i++) {
@@ -86,6 +87,7 @@ public class MakeApiCall implements Runnable{
                         coins.add(coin);
                     }
                     mainActivity.setCoins(coins);
+                    setCoinsImg();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -93,6 +95,46 @@ public class MakeApiCall implements Runnable{
                 message.obj = response;
                 message.what = 1;
                 uiHandler.sendMessage(message);
+            }
+        });
+    }
+
+    public void setCoinsImg() {
+        final ArrayList <Coin> coins = mainActivity.getCoins();
+        String metaUrl = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/info";
+        StringBuilder idString = new StringBuilder();
+        for (int i = 0; i < coins.size(); i++) {
+            idString.append(coins.get(i).id);
+            if (i != coins.size()-1) {
+                idString.append(",");
+            }
+        }
+        HttpUrl.Builder httpBuilder = HttpUrl.parse(metaUrl).newBuilder();
+        HttpUrl httpUrl = httpBuilder.addQueryParameter("id", idString.toString()).build();
+        Request request = new Request.Builder()
+                .url(httpUrl)
+                .addHeader("Accept", "application/json")
+                .addHeader("X-CMC_PRO_API_KEY", apiKey)
+                .build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Message message = new Message();
+                message.what = -1;
+                uiHandler.sendMessage(message);
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try {
+                    JSONObject root = new JSONObject(response.body().string());
+                    JSONObject data = root.getJSONObject("data");
+                    for (Coin coin : coins) {
+                        coin.imgUrl = data.getJSONObject(String.valueOf(coin.id)).getString("logo");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

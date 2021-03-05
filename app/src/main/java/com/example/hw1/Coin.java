@@ -9,6 +9,7 @@ public class Coin {
     public double percentageChange_1h;
     public double percentageChange_24h;
     public double percentageChange_7d;
+    public String imgUrl;
 
 
     public Coin(int id, String fullName, String symbol, double currentPrice, double percentageChange_1h,
