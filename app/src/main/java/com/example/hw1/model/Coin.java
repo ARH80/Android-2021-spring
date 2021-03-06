@@ -1,5 +1,15 @@
-package com.example.hw1;
+package com.example.hw1.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString
 public class Coin {
 
     public int id;
@@ -25,16 +35,5 @@ public class Coin {
         this.percentageChange_7d = percentageChange_7d;
     }
 
-    @Override
-    public String toString() {
-        return "Coin{" +
-                "id=" + id +
-                ", fullName='" + fullName + '\'' +
-                ", symbol='" + symbol + '\'' +
-                ", currentPrice=" + currentPrice +
-                ", percentageChange_1h=" + percentageChange_1h +
-                ", percentageChange_24h=" + percentageChange_24h +
-                ", percentageChange_7d=" + percentageChange_7d +
-                '}';
-    }
 }
+

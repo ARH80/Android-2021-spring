@@ -1,4 +1,11 @@
-package com.example.hw1;
+package com.example.hw1.service;
+
+import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
+
+import com.example.hw1.MainActivity;
+import com.example.hw1.model.Coin;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -7,16 +14,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import android.content.Context;
-import android.nfc.Tag;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
-import android.widget.Toast;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -24,9 +22,8 @@ import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.internal.http.HttpHeaders;
 
-public class MakeApiCall implements Runnable{
+public class CoinService implements Runnable {
 
     private int coinsToBeShown = 10;
     private final String url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest";
@@ -36,7 +33,7 @@ public class MakeApiCall implements Runnable{
     private Context context;
     private OkHttpClient okHttpClient = new OkHttpClient.Builder().callTimeout(5, TimeUnit.SECONDS).build();
 
-    public MakeApiCall(MainActivity mainActivity, Handler uiHandler, Context context) {
+    public CoinService(MainActivity mainActivity, Handler uiHandler, Context context) {
         this.mainActivity = mainActivity;
         this.uiHandler = uiHandler;
         this.context = context;
@@ -48,8 +45,8 @@ public class MakeApiCall implements Runnable{
 
     @Override
     public void run() {
-        HttpUrl.Builder htttpBuilder =  HttpUrl.parse(url).newBuilder();
-        HttpUrl httpUrl = htttpBuilder.addQueryParameter("start", "1")
+        HttpUrl.Builder httpBuilder = HttpUrl.parse(url).newBuilder();
+        HttpUrl httpUrl = httpBuilder.addQueryParameter("start", "1")
                 .addQueryParameter("limit", String.valueOf(coinsToBeShown))
                 .addQueryParameter("convert", "USD")
                 .build();
@@ -101,12 +98,12 @@ public class MakeApiCall implements Runnable{
     }
 
     public void setCoinsImg() {
-        final ArrayList <Coin> coins = mainActivity.getCoins();
+        final ArrayList<Coin> coins = mainActivity.getCoins();
         String metaUrl = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/info";
         StringBuilder idString = new StringBuilder();
         for (int i = 0; i < coins.size(); i++) {
             idString.append(coins.get(i).id);
-            if (i != coins.size()-1) {
+            if (i != coins.size() - 1) {
                 idString.append(",");
             }
         }

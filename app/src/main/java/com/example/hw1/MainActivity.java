@@ -1,12 +1,7 @@
 package com.example.hw1;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,22 +10,20 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
-import java.lang.ref.WeakReference;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hw1.adaptors.CoinAdaptor;
+import com.example.hw1.model.Coin;
+import com.example.hw1.service.CoinService;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-
-import okhttp3.Response;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoinListener {
 
@@ -40,8 +33,9 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
     private Button reloadButton;
     private Button moreCoinsButton;
     private TextView result;
-    private MakeApiCall makeApiCall;
+    private CoinService coinService;
     private CoinAdaptor coinAdaptor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
         this.mHandler.setContext(this);
         this.reloadButton = findViewById(R.id.reloadBtn);
         this.moreCoinsButton = findViewById(R.id.moreCoinsBtn);
-        this.makeApiCall = new MakeApiCall(this, mHandler, this);
+        this.coinService = new CoinService(this, mHandler, this);
         reloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,21 +71,24 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
     }
 
     public void reload() {
-        executorPool.execute(makeApiCall);
+        executorPool.execute(coinService);
     }
 
 
     public void addMoreCoins() {
-        makeApiCall.addMoreCoins();
+        coinService.addMoreCoins();
         reload();
     }
 
     @Override
     public void onClick(int position) {
-
+        Intent myIntent = new Intent(MainActivity.this, CoinActivity.class);
+        myIntent.putExtra("position", position);
+        myIntent.putExtra("symbol", coins.get(position).getSymbol());
+        MainActivity.this.startActivity(myIntent);
     }
 
-    private class UiHandler extends Handler{
+    private class UiHandler extends Handler {
         private WeakReference<Context> mWeakRefContext;
 
         public void setContext(Context context) {
@@ -107,12 +104,12 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
             super.handleMessage(msg);
             switch (msg.what) {
                 case -1:
-                    if (mWeakRefContext != null && mWeakRefContext.get() != null){
+                    if (mWeakRefContext != null && mWeakRefContext.get() != null) {
                         Toast.makeText(mWeakRefContext.get(), "Couldn't reach server", Toast.LENGTH_SHORT).show();
                     }
                     break;
                 case 1:
-                    if (mWeakRefContext != null && mWeakRefContext.get() != null){
+                    if (mWeakRefContext != null && mWeakRefContext.get() != null) {
 //                        result.setText(Arrays.toString(coins.toArray())); // this is just for test
                         coinAdaptor.setData(coins);
                         coinAdaptor.notifyDataSetChanged();

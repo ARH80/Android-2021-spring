@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.hw1.Coin;
+import com.example.hw1.model.Coin;
 import com.example.hw1.R;
 
 import java.util.ArrayList;
