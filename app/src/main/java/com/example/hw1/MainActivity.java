@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,23 +13,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.util.Arrays;
-import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
-
 import com.example.hw1.adaptors.CoinAdaptor;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-
-import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoinListener {
 
@@ -39,7 +26,6 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
     private ThreadPoolExecutor executorPool;
     private Button reloadButton;
     private Button moreCoinsButton;
-    private TextView result;
     private MakeApiCall makeApiCall;
     private CoinAdaptor coinAdaptor;
     @Override
@@ -49,7 +35,6 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
 
         RecyclerView coinsRecyclerView = findViewById(R.id.coin_recyclerView);
         coinsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        //TODO coins array list need to be initialized
         this.coinAdaptor = new CoinAdaptor(coins, this, this);
         coinsRecyclerView.addItemDecoration(new DividerItemDecoration(coinsRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
         coinsRecyclerView.setAdapter(coinAdaptor);

@@ -14,7 +14,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String COL_1 = "ID";
     public static final String COL_2 = "Coin_JSON";
 
-
     public DataBaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, 1);
     }

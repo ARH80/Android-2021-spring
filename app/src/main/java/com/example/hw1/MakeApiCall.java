@@ -4,19 +4,20 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import android.content.Context;
-import android.nfc.Tag;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
-import android.widget.Toast;
+import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.GlideBuilder;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -24,7 +25,6 @@ import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.internal.http.HttpHeaders;
 
 public class MakeApiCall implements Runnable{
 
@@ -132,6 +132,13 @@ public class MakeApiCall implements Runnable{
                     JSONObject data = root.getJSONObject("data");
                     for (Coin coin : coins) {
                         coin.imgUrl = data.getJSONObject(String.valueOf(coin.id)).getString("logo");
+                        try {
+                            URL url = new URL(coin.imgUrl);
+                            Bitmap image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+                            coin.setBitmapAsByteArray(image);
+                        } catch(IOException e) {
+                            System.out.println(e);
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

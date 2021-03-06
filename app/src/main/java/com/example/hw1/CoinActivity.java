@@ -44,4 +44,5 @@ public class CoinActivity extends AppCompatActivity {
         l.setEnabled(false);
 ///////// TODO add set and data to candle stick chart
     }
+
 }
