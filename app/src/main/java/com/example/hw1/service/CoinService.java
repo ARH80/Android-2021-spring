@@ -129,6 +129,13 @@ public class CoinService implements Runnable {
                     JSONObject data = root.getJSONObject("data");
                     for (Coin coin : coins) {
                         coin.imgUrl = data.getJSONObject(String.valueOf(coin.id)).getString("logo");
+                        try {
+                            URL url = new URL(coin.imgUrl);
+                            Bitmap image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+                            coin.setBitmapAsByteArray(image);
+                        } catch(IOException e) {
+                            System.out.println(e);
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

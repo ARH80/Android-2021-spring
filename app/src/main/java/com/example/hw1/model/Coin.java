@@ -1,5 +1,9 @@
 package com.example.hw1.model;
 
+import android.graphics.Bitmap;
+
+import java.io.ByteArrayOutputStream;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +25,7 @@ public class Coin {
     public double percentageChange_7d;
     public String imgUrl;
     public int rank;
-
+    public byte[] imageBytes;
 
     public Coin(int id, String fullName, String symbol, double currentPrice, double percentageChange_1h,
                 double percentageChange_24h, double percentageChange_7d, int rank) {
@@ -33,6 +37,12 @@ public class Coin {
         this.percentageChange_1h = percentageChange_1h;
         this.percentageChange_24h = percentageChange_24h;
         this.percentageChange_7d = percentageChange_7d;
+    }
+
+    public void setBitmapAsByteArray(Bitmap bitmap) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, outputStream);
+        imageBytes =  outputStream.toByteArray();
     }
 
 }

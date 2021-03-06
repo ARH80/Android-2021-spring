@@ -1,6 +1,8 @@
 package com.example.hw1.adaptors;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +49,7 @@ public class CoinAdaptor extends RecyclerView.Adapter<CoinAdaptor.ViewHolder> {
         holder.coin1WChange.setText("7d: " + String.format("%.3f", coin.percentageChange_7d) + "%");
         holder.coinRank.setText(String.valueOf(coin.rank));
         Glide.with(context).load(coin.imgUrl).into(holder.coinImage);
+
 
         //holder.coin24Volume.setText();
         //holder.coinMarketCap.setText();

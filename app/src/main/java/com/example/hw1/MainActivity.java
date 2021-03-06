@@ -1,5 +1,10 @@
 package com.example.hw1;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,6 +29,9 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
+import com.example.hw1.adaptors.CoinAdaptor;
+import java.util.ArrayList;
+
 
 public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoinListener {
 
@@ -32,7 +40,6 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
     private ThreadPoolExecutor executorPool;
     private Button reloadButton;
     private Button moreCoinsButton;
-    private TextView result;
     private CoinService coinService;
     private CoinAdaptor coinAdaptor;
 
@@ -43,7 +50,6 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
 
         RecyclerView coinsRecyclerView = findViewById(R.id.coin_recyclerView);
         coinsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        //TODO coins array list need to be initialized
         this.coinAdaptor = new CoinAdaptor(coins, this, this);
         coinsRecyclerView.addItemDecoration(new DividerItemDecoration(coinsRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
         coinsRecyclerView.setAdapter(coinAdaptor);
