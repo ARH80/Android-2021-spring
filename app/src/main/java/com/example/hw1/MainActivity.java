@@ -56,17 +56,12 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
         this.dbManager = DataBaseManager.getInstance(this, mHandler, this);
         moreCoinsButton.setOnClickListener(view -> addMoreCoins());
         refreshLayout = findViewById(R.id.swiperefresh);
-        refreshLayout.setOnRefreshListener(() -> reload(false));
+        refreshLayout.setOnRefreshListener(this::reload);
 
         readFromDb();
-        refreshLayout.setOnRefreshListener(() -> reload(false));
     }
 
-    public void reload(boolean add) {
-        if (!add) {
-
-            coinService.setCoinsToBeShown(10);
-        }
+    public void reload() {
         refreshLayout.setRefreshing(true);
         moreCoinsButton.setEnabled(false);
         executorPool.execute(() -> coinService.getNewCoins());
@@ -85,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
 
     public void addMoreCoins() {
         coinService.addMoreCoins();
-        reload(true);
+        reload();
     }
 
     @Override
@@ -113,7 +108,6 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
             switch (msg.what) {
                 case -1:
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
-                        coinAdaptor.setData(coins);
                         Toast.makeText(mWeakRefContext.get(), "Couldn't reach server", Toast.LENGTH_SHORT).show();
                         readFromDb();
                     }
