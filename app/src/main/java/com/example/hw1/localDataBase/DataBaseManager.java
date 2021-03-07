@@ -67,8 +67,6 @@ public class DataBaseManager implements Runnable {
                 mainActivity.getCoins().add(coin);
             }
         }
-
-
         Message msg = new Message();
         msg.what = 2;
         uiHandler.sendMessage(msg);

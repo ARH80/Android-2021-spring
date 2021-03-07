@@ -22,7 +22,6 @@ import com.example.hw1.service.CoinService;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -58,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
         moreCoinsButton.setOnClickListener(view -> addMoreCoins());
         refreshLayout = findViewById(R.id.swiperefresh);
         refreshLayout.setOnRefreshListener(this::reload);
+
+        readFromDb();
     }
 
     public void reload() {
