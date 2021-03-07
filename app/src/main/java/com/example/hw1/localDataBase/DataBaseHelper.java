@@ -21,7 +21,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL("create table " + TABLE_NAME +
-                " (ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                " (ID INTEGER PRIMARY KEY," +
                 "COIN_JSON TEXT)");
     }
 
@@ -31,9 +31,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
-    public boolean insertData(String coinJson) {
+    public boolean insertData(int id, String coinJson) {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_1, id);
         contentValues.put(COL_2, coinJson);
         long result = sqLiteDatabase.insert(TABLE_NAME, null, contentValues);
         return result != -1;

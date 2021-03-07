@@ -16,11 +16,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.hw1.adaptors.CoinAdaptor;
+import com.example.hw1.localDataBase.DataBaseManager;
 import com.example.hw1.model.Coin;
 import com.example.hw1.service.CoinService;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -33,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
     private Button moreCoinsButton;
     private CoinService coinService;
     private CoinAdaptor coinAdaptor;
+    private DataBaseManager dbManager;
     private SwipeRefreshLayout refreshLayout;
 
     @Override
@@ -46,11 +49,12 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
         coinsRecyclerView.addItemDecoration(new DividerItemDecoration(coinsRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
         coinsRecyclerView.setAdapter(coinAdaptor);
 
-        this.executorPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(5);
+        this.executorPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(100);
         this.mHandler = new UiHandler();
         this.mHandler.setContext(this);
         this.moreCoinsButton = findViewById(R.id.moreCoinsBtn);
         this.coinService = new CoinService(this, mHandler, this);
+        this.dbManager = new DataBaseManager(this, mHandler, this);
         moreCoinsButton.setOnClickListener(view -> addMoreCoins());
         refreshLayout = findViewById(R.id.swiperefresh);
         refreshLayout.setOnRefreshListener(this::reload);
@@ -87,6 +91,18 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
             return mWeakRefContext;
         }
 
+
+        public void refreshDb(ArrayList<Coin> coins) {
+            dbManager.coins = coins;
+            dbManager.setTask(4);
+            executorPool.execute(dbManager);
+        }
+
+        public void readFromDb() {
+            dbManager.setTask(1);
+            executorPool.execute(dbManager);
+        }
+
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
@@ -94,7 +110,11 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
                 case -1:
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
                         Toast.makeText(mWeakRefContext.get(), "Couldn't reach server", Toast.LENGTH_SHORT).show();
+                        readFromDb();
                     }
+                    break;
+                case 0:
+                    Toast.makeText(mWeakRefContext.get(), "no database info check the connection", Toast.LENGTH_SHORT).show();
                     break;
                 case 1:
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
@@ -102,12 +122,40 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
                         coinAdaptor.setData(coins);
                         coinAdaptor.notifyDataSetChanged();
                         Toast.makeText(mWeakRefContext.get(), "Coins are updated", Toast.LENGTH_SHORT).show();
+                        refreshDb(coinAdaptor.getData());
                     }
+                    break;
+
+                case 2:
+                    if (mWeakRefContext != null && mWeakRefContext.get() != null) {
+                        sortDb(coins, coins.size());
+                        coinAdaptor.setData(coins);
+                        coinAdaptor.notifyDataSetChanged();
+                        Toast.makeText(mWeakRefContext.get(), "Data is presented by DB", Toast.LENGTH_SHORT).show();
+                    }
+
                     break;
             }
             refreshLayout.setRefreshing(false);
             moreCoinsButton.setEnabled(true);
         }
+    }
+
+    public void sortDb(ArrayList<Coin> input, int length) {
+        if (length <= 1) {
+            return;
+        }
+
+        sortDb(input, length - 1);
+
+        int last = input.get(length - 1).rank;
+        Coin coin = input.get(length - 1);
+        int j = length - 2;
+        while (j >= 0 && input.get(j).rank > last) {
+            input.set(j+1, input.get(j));
+            j--;
+        }
+        input.set(j+1, coin);
     }
 
     public ArrayList<Coin> getCoins() {
