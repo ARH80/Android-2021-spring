@@ -23,14 +23,22 @@ public class DataBaseManager implements Runnable {
     public ArrayList<Integer> coinId;
     public ArrayList<Coin> coins;
     private Coin coin;
+    private static DataBaseManager dataBaseManager = null;
 
-    public DataBaseManager(MainActivity mainActivity, Handler uiHandler, Context context) {
+    private DataBaseManager(MainActivity mainActivity, Handler uiHandler, Context context) {
         this.uiHandler = uiHandler;
         this.context = context;
         this.db = new DataBaseHelper(context);
         this.coinId = new ArrayList<>();
         this.mainActivity = mainActivity;
         this.coins = new ArrayList<>();
+    }
+
+    public static synchronized DataBaseManager getInstance(MainActivity mainActivity, Handler uiHandler, Context context) {
+        if (dataBaseManager == null) {
+            dataBaseManager = new DataBaseManager(mainActivity, uiHandler, context);
+        }
+        return dataBaseManager;
     }
 
     public void refreshDb(ArrayList<Coin> coins) {

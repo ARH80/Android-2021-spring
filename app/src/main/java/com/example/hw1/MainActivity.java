@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
         this.mHandler.setContext(this);
         this.moreCoinsButton = findViewById(R.id.moreCoinsBtn);
         this.coinService = new CoinService(this, mHandler, this);
-        this.dbManager = new DataBaseManager(this, mHandler, this);
+        this.dbManager = DataBaseManager.getInstance(this, mHandler, this);
         moreCoinsButton.setOnClickListener(view -> addMoreCoins());
         refreshLayout = findViewById(R.id.swiperefresh);
         refreshLayout.setOnRefreshListener(this::reload);
@@ -66,6 +66,16 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
         executorPool.execute(() -> coinService.getNewCoins());
     }
 
+    public void refreshDb(ArrayList<Coin> coins) {
+        dbManager.coins = coins;
+        dbManager.setTask(4);
+        executorPool.execute(dbManager);
+    }
+
+    public void readFromDb() {
+        dbManager.setTask(1);
+        executorPool.execute(dbManager);
+    }
 
     public void addMoreCoins() {
         coinService.addMoreCoins();
@@ -89,18 +99,6 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
 
         public WeakReference<Context> getmWeakRefContext() {
             return mWeakRefContext;
-        }
-
-
-        public void refreshDb(ArrayList<Coin> coins) {
-            dbManager.coins = coins;
-            dbManager.setTask(4);
-            executorPool.execute(dbManager);
-        }
-
-        public void readFromDb() {
-            dbManager.setTask(1);
-            executorPool.execute(dbManager);
         }
 
         @Override
