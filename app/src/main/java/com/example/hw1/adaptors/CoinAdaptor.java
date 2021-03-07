@@ -48,7 +48,6 @@ public class CoinAdaptor extends RecyclerView.Adapter<CoinAdaptor.ViewHolder> {
         holder.coin1HChange.setText("1h: " + String.format("%.3f", coin.percentageChange_1h) + "%");
         holder.coin1DChange.setText("24h: " + String.format("%.3f", coin.percentageChange_24h) + "%");
         holder.coin1WChange.setText("7d: " + String.format("%.3f", coin.percentageChange_7d) + "%");
-        holder.coinRank.setText(String.valueOf(coin.rank));
         Glide.with(context).load(coin.imgUrl).into(holder.coinImage);
         if (coin.percentageChange_1h >= 0) {
             holder.coin1HChange.setTextColor(context.getResources().getColor(R.color.green));
@@ -94,7 +93,6 @@ public class CoinAdaptor extends RecyclerView.Adapter<CoinAdaptor.ViewHolder> {
             coin1HChange = itemView.findViewById(R.id.oneHourChangeTextView);
             coin1DChange = itemView.findViewById(R.id.dayChangeTextView);
             coin1WChange = itemView.findViewById(R.id.weekChangeTextView);
-            coinRank = itemView.findViewById(R.id.rankTextView);
             coinImage = itemView.findViewById(R.id.currencyListCoinImageView);
             this.onCoinListener = onCoinListener;
             itemView.setOnClickListener(this);

@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
 
     public void reload(boolean add) {
         if (!add) {
-            coins.clear();
+
             coinService.setCoinsToBeShown(10);
         }
         refreshLayout.setRefreshing(true);
@@ -113,16 +113,13 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
             switch (msg.what) {
                 case -1:
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
+                        coinAdaptor.setData(coins);
                         Toast.makeText(mWeakRefContext.get(), "Couldn't reach server", Toast.LENGTH_SHORT).show();
                         readFromDb();
                     }
                     break;
-                case 0:
-                    Toast.makeText(mWeakRefContext.get(), "no database info check the connection", Toast.LENGTH_SHORT).show();
-                    break;
                 case 1:
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
-//                        result.setText(Arrays.toString(coins.toArray())); // this is just for test
                         coinAdaptor.setData(coins);
                         coinAdaptor.notifyDataSetChanged();
                         Toast.makeText(mWeakRefContext.get(), "Coins are updated", Toast.LENGTH_SHORT).show();
@@ -135,7 +132,6 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
                         sortDb(coins, coins.size());
                         coinAdaptor.setData(coins);
                         coinAdaptor.notifyDataSetChanged();
-                        Toast.makeText(mWeakRefContext.get(), "Data is presented by DB", Toast.LENGTH_SHORT).show();
                     }
 
                     break;
