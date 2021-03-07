@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -29,23 +30,50 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 public class CoinActivity extends AppCompatActivity {
     private CandleService candleService;
-    private ChartHandler handler;
     private ThreadPoolExecutor executorPool;
-    private Range range = Range.oneMonth;
-    private ArrayList<CandleEntry> yValsCandleStick = new ArrayList<>();
-    private CandleStickChart candleStickChart;
 
+    private Button monthBtn;
+    private Button weekBtn;
+
+    private String symbol;
+    private Range range = Range.oneMonth;
+    private CandleStickChart candleStickChart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
-        String symbol = intent.getStringExtra("symbol");
+        this.symbol = intent.getStringExtra("symbol");
 
         setContentView(R.layout.activity_coin);
         // adding chart to activity
         candleStickChart = findViewById(R.id.candle_stick_chart);
+        changeSettingOfChart();
+        this.monthBtn = findViewById(R.id.monthCandleBtn);
+        this.weekBtn = findViewById(R.id.weakCandleBtn);
+        monthBtn.setOnClickListener(view -> onChartPeriodChange(Range.oneMonth));
+        weekBtn.setOnClickListener(view -> onChartPeriodChange(Range.weekly));
+
+        //get data
+        ChartHandler handler = new ChartHandler();
+        handler.setContext(this);
+        this.executorPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(5);
+        candleService = new CandleService(this, handler, this);
+        executorPool.execute(() -> candleService.getCandles(symbol, range));
+
+    }
+
+    private void onChartPeriodChange(Range actionRange) {
+        if (!actionRange.equals(this.range)) {
+            this.range = actionRange;
+            monthBtn.setEnabled(false);
+            weekBtn.setEnabled(false);
+            executorPool.execute(() -> candleService.getCandles(this.symbol, this.range));
+        }
+    }
+
+    private void changeSettingOfChart() {
         candleStickChart.setHighlightPerDragEnabled(true);
 
         candleStickChart.setDrawBorders(true);
@@ -70,14 +98,6 @@ public class CoinActivity extends AppCompatActivity {
 
         Legend l = candleStickChart.getLegend();
         l.setEnabled(false);
-
-        //get data
-        this.handler = new ChartHandler();
-        this.handler.setContext(this);
-        this.executorPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(5);
-        candleService = new CandleService(this, handler, this);
-        executorPool.execute(() -> candleService.getCandles(symbol, range));
-
     }
 
     private class ChartHandler extends Handler {
@@ -101,7 +121,7 @@ public class CoinActivity extends AppCompatActivity {
                     }
                     break;
                 case 1:
-                    yValsCandleStick = (ArrayList<CandleEntry>) msg.obj;
+                    ArrayList<CandleEntry> yValsCandleStick = (ArrayList<CandleEntry>) msg.obj;
                     CandleDataSet set1 = new CandleDataSet(yValsCandleStick, "DataSet 1");
                     set1.setColor(Color.rgb(80, 80, 80));
                     set1.setShadowColor(getResources().getColor(R.color.lightGrey));
@@ -119,6 +139,8 @@ public class CoinActivity extends AppCompatActivity {
                     candleStickChart.invalidate();
                     break;
             }
+            weekBtn.setEnabled(true);
+            monthBtn.setEnabled(true);
         }
     }
 

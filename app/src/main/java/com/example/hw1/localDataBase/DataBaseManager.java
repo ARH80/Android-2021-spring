@@ -2,12 +2,13 @@ package com.example.hw1.localDataBase;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
-import com.example.hw1.Coin;
 import com.example.hw1.MainActivity;
-import com.google.gson.Gson;
+import com.example.hw1.model.Coin;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Handler;
 
@@ -29,14 +30,14 @@ public class DataBaseManager implements Runnable {
         this.mainActivity = mainActivity;
     }
 
-    public void readFromDb() {
+    public void readFromDb() throws IOException {
         Cursor res = db.getAllData();
         if (res.getCount() == 0) {
             return;
         }
         while (res.moveToNext()) {
             if (!coinId.contains(res.getString(0))) {
-                Coin coin = new Gson().fromJson(res.getString(1), Coin.class);
+                Coin coin = new ObjectMapper().readValue(res.getString(1), Coin.class);
                 coinId.add(res.getString(0));
                 mainActivity.getCoins().add(coin);
             }
@@ -47,7 +48,11 @@ public class DataBaseManager implements Runnable {
     public void run() {
         switch (task) {
             case 1:
-                readFromDb();
+                try {
+                    readFromDb();
+                } catch (IOException e) {
+                    Log.e("readFromDb", e.toString(), e);
+                }
                 break;
             case 2:
 
