@@ -113,4 +113,8 @@ public class CoinAdaptor extends RecyclerView.Adapter<CoinAdaptor.ViewHolder> {
     public void setData(ArrayList<Coin> data) {
         this.data = data;
     }
+
+    public ArrayList<Coin> getData() {
+        return data;
+    }
 }
