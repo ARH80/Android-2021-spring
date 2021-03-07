@@ -49,8 +49,8 @@ public class CoinService {
     public void getNewCoins() {
         String url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest";
         HttpUrl.Builder httpBuilder = HttpUrl.parse(url).newBuilder();
-        HttpUrl httpUrl = httpBuilder.addQueryParameter("start", "1")
-                .addQueryParameter("limit", String.valueOf(coinsToBeShown))
+        HttpUrl httpUrl = httpBuilder.addQueryParameter("start", Integer.toString(mainActivity.getCoins().size() + 1))
+                .addQueryParameter("limit", String.valueOf(mainActivity.getCoins().size() + coinsToBeShown))
                 .addQueryParameter("convert", "USD")
                 .build();
         Request request = new Request.Builder()
@@ -74,7 +74,6 @@ public class CoinService {
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try {
                     ArrayList<Coin> coins = mainActivity.getCoins();
-                    coins.clear();
                     JSONObject root = new JSONObject(response.body().string());
                     JSONArray data = root.getJSONArray("data");
                     for (int i = 0; i < data.length(); i++) {
@@ -153,5 +152,9 @@ public class CoinService {
                 }
             }
         });
+    }
+
+    public void setCoinsToBeShown(int coinsToBeShown) {
+        this.coinsToBeShown = coinsToBeShown;
     }
 }

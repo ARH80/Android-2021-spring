@@ -53,10 +53,14 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
         this.coinService = new CoinService(this, mHandler, this);
         moreCoinsButton.setOnClickListener(view -> addMoreCoins());
         refreshLayout = findViewById(R.id.swiperefresh);
-        refreshLayout.setOnRefreshListener(this::reload);
+        refreshLayout.setOnRefreshListener(() -> reload(false));
     }
 
-    public void reload() {
+    public void reload(boolean add) {
+        if (!add) {
+            coins.clear();
+            coinService.setCoinsToBeShown(10);
+        }
         refreshLayout.setRefreshing(true);
         moreCoinsButton.setEnabled(false);
         executorPool.execute(() -> coinService.getNewCoins());
@@ -65,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
 
     public void addMoreCoins() {
         coinService.addMoreCoins();
-        reload();
+        reload(true);
     }
 
     @Override

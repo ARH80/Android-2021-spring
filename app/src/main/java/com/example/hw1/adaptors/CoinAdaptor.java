@@ -2,6 +2,7 @@ package com.example.hw1.adaptors;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,8 +50,18 @@ public class CoinAdaptor extends RecyclerView.Adapter<CoinAdaptor.ViewHolder> {
         holder.coin1WChange.setText("7d: " + String.format("%.3f", coin.percentageChange_7d) + "%");
         holder.coinRank.setText(String.valueOf(coin.rank));
         Glide.with(context).load(coin.imgUrl).into(holder.coinImage);
-
-
+        if (coin.percentageChange_1h >= 0) {
+            holder.coin1HChange.setTextColor(context.getResources().getColor(R.color.green));
+        } else
+            holder.coin1HChange.setTextColor(context.getResources().getColor(R.color.myred));
+        if (coin.percentageChange_24h >= 0) {
+            holder.coin1DChange.setTextColor(context.getResources().getColor(R.color.green));
+        } else
+            holder.coin1DChange.setTextColor(context.getResources().getColor(R.color.myred));
+        if (coin.percentageChange_7d >= 0) {
+            holder.coin1WChange.setTextColor(context.getResources().getColor(R.color.green));
+        } else
+            holder.coin1WChange.setTextColor(context.getResources().getColor(R.color.myred));
         //holder.coin24Volume.setText();
         //holder.coinMarketCap.setText();
 
