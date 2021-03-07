@@ -27,7 +27,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class CoinService implements Runnable {
+public class CoinService {
 
     private int coinsToBeShown = 10;
     private static final String API_KEY = "3675f481-d4db-4195-b319-549d5a5ce2ee";
@@ -46,8 +46,7 @@ public class CoinService implements Runnable {
         this.coinsToBeShown += 10;
     }
 
-    @Override
-    public void run() {
+    public void getNewCoins() {
         String url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest";
         HttpUrl.Builder httpBuilder = HttpUrl.parse(url).newBuilder();
         HttpUrl httpUrl = httpBuilder.addQueryParameter("start", "1")
@@ -106,7 +105,7 @@ public class CoinService implements Runnable {
     }
 
     public void setCoinsImg() {
-        final ArrayList<Coin> coins = mainActivity.getCoins();
+        final ArrayList<Coin> coins = new ArrayList<>(mainActivity.getCoins());
         String metaUrl = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/info";
         StringBuilder idString = new StringBuilder();
         for (int i = 0; i < coins.size(); i++) {

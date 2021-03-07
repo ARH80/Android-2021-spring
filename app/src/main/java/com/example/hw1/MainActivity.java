@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.hw1.adaptors.CoinAdaptor;
 import com.example.hw1.model.Coin;
@@ -29,10 +30,10 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
     private ArrayList<Coin> coins = new ArrayList<>();
     private UiHandler mHandler;
     private ThreadPoolExecutor executorPool;
-    private Button reloadButton;
     private Button moreCoinsButton;
     private CoinService coinService;
     private CoinAdaptor coinAdaptor;
+    private SwipeRefreshLayout refreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,17 +49,17 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
         this.executorPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(5);
         this.mHandler = new UiHandler();
         this.mHandler.setContext(this);
-        this.reloadButton = findViewById(R.id.reloadBtn);
         this.moreCoinsButton = findViewById(R.id.moreCoinsBtn);
         this.coinService = new CoinService(this, mHandler, this);
-        reloadButton.setOnClickListener(view -> reload());
         moreCoinsButton.setOnClickListener(view -> addMoreCoins());
-
-
+        refreshLayout = findViewById(R.id.swiperefresh);
+        refreshLayout.setOnRefreshListener(this::reload);
     }
 
     public void reload() {
-        executorPool.execute(coinService);
+        refreshLayout.setRefreshing(true);
+        moreCoinsButton.setEnabled(false);
+        executorPool.execute(() -> coinService.getNewCoins());
     }
 
 
@@ -104,6 +105,8 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
                     }
                     break;
             }
+            refreshLayout.setRefreshing(false);
+            moreCoinsButton.setEnabled(true);
         }
     }
 
