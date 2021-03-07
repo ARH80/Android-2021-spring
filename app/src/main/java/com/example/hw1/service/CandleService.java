@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import lombok.AllArgsConstructor;
+import okhttp3.CacheControl;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.HttpUrl;
@@ -30,7 +31,7 @@ import okhttp3.Response;
 
 @AllArgsConstructor
 public class CandleService {
-    private static final String YOUR_COIN_IO_API_KEY = "7AB3FC97-BB79-4368-A4E3-A89B03449E4F";
+    private static final String COIN_IO_API_KEY = "7AB3FC97-BB79-4368-A4E3-A89B03449E4F";
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
     private final OkHttpClient okHttpClient = new OkHttpClient.Builder().callTimeout(5, TimeUnit.SECONDS).build();
 
@@ -70,8 +71,12 @@ public class CandleService {
 
 
         final Request request = new Request.Builder()
+                .cacheControl(new CacheControl.Builder()
+                        .maxAge(60, TimeUnit.SECONDS)
+                        .maxStale(7, TimeUnit.DAYS)
+                        .build())
                 .url(httpUrl)
-                .addHeader("X-CoinAPI-Key", YOUR_COIN_IO_API_KEY)
+                .addHeader("X-CoinAPI-Key", COIN_IO_API_KEY)
                 .build();
 
         okHttpClient.newCall(request).enqueue(new Callback() {

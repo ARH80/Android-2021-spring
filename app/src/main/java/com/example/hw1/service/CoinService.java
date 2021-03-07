@@ -19,6 +19,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.CacheControl;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.HttpUrl;
@@ -29,12 +30,11 @@ import okhttp3.Response;
 public class CoinService implements Runnable {
 
     private int coinsToBeShown = 10;
-    private final String url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest";
-    private final String apiKey = "3675f481-d4db-4195-b319-549d5a5ce2ee";
-    private MainActivity mainActivity;
-    private Handler uiHandler;
+    private static final String API_KEY = "3675f481-d4db-4195-b319-549d5a5ce2ee";
+    private final MainActivity mainActivity;
+    private final Handler uiHandler;
     private Context context;
-    private OkHttpClient okHttpClient = new OkHttpClient.Builder().callTimeout(5, TimeUnit.SECONDS).build();
+    private final OkHttpClient okHttpClient = new OkHttpClient.Builder().callTimeout(5, TimeUnit.SECONDS).build();
 
     public CoinService(MainActivity mainActivity, Handler uiHandler, Context context) {
         this.mainActivity = mainActivity;
@@ -48,15 +48,20 @@ public class CoinService implements Runnable {
 
     @Override
     public void run() {
+        String url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest";
         HttpUrl.Builder httpBuilder = HttpUrl.parse(url).newBuilder();
         HttpUrl httpUrl = httpBuilder.addQueryParameter("start", "1")
                 .addQueryParameter("limit", String.valueOf(coinsToBeShown))
                 .addQueryParameter("convert", "USD")
                 .build();
         Request request = new Request.Builder()
+                .cacheControl(new CacheControl.Builder()
+                        .maxAge(60, TimeUnit.SECONDS)
+                        .maxStale(7, TimeUnit.DAYS)
+                        .build())
                 .url(httpUrl)
                 .addHeader("Accept", "application/json")
-                .addHeader("X-CMC_PRO_API_KEY", this.apiKey)
+                .addHeader("X-CMC_PRO_API_KEY", API_KEY)
                 .build();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
@@ -113,9 +118,13 @@ public class CoinService implements Runnable {
         HttpUrl.Builder httpBuilder = HttpUrl.parse(metaUrl).newBuilder();
         HttpUrl httpUrl = httpBuilder.addQueryParameter("id", idString.toString()).build();
         Request request = new Request.Builder()
+                .cacheControl(new CacheControl.Builder()
+                        .maxAge(60, TimeUnit.SECONDS)
+                        .maxStale(7, TimeUnit.DAYS)
+                        .build())
                 .url(httpUrl)
                 .addHeader("Accept", "application/json")
-                .addHeader("X-CMC_PRO_API_KEY", apiKey)
+                .addHeader("X-CMC_PRO_API_KEY", API_KEY)
                 .build();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
