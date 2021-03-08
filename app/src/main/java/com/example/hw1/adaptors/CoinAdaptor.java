@@ -1,9 +1,6 @@
 package com.example.hw1.adaptors;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.hw1.model.Coin;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.hw1.R;
+import com.example.hw1.model.Coin;
 
 import java.util.ArrayList;
 
@@ -48,7 +46,10 @@ public class CoinAdaptor extends RecyclerView.Adapter<CoinAdaptor.ViewHolder> {
         holder.coin1HChange.setText("1h: " + String.format("%.3f", coin.percentageChange_1h) + "%");
         holder.coin1DChange.setText("24h: " + String.format("%.3f", coin.percentageChange_24h) + "%");
         holder.coin1WChange.setText("7d: " + String.format("%.3f", coin.percentageChange_7d) + "%");
-        Glide.with(context).load(coin.imgUrl).into(holder.coinImage);
+        Glide.with(context)
+                .load(coin.imgUrl)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                .into(holder.coinImage);
         if (coin.percentageChange_1h >= 0) {
             holder.coin1HChange.setTextColor(context.getResources().getColor(R.color.green));
         } else
