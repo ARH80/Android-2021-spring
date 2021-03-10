@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
         coinsRecyclerView.addItemDecoration(new DividerItemDecoration(coinsRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
         coinsRecyclerView.setAdapter(coinAdaptor);
 
-        this.executorPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(100);
+        this.executorPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
         this.mHandler = new UiHandler();
         this.mHandler.setContext(this);
         this.moreCoinsButton = findViewById(R.id.moreCoinsBtn);
@@ -112,6 +112,11 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
                         readFromDb();
                     }
                     break;
+                case 0:
+                    if (mWeakRefContext != null && mWeakRefContext.get() != null) {
+                        Toast.makeText(mWeakRefContext.get(), "DB is empty reload pls", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
                 case 1:
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
                         coinAdaptor.setData(coins);
@@ -120,14 +125,21 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
                         refreshDb(coinAdaptor.getData());
                     }
                     break;
-
                 case 2:
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
                         sortDb(coins, coins.size());
                         coinAdaptor.setData(coins);
                         coinAdaptor.notifyDataSetChanged();
+                        Toast.makeText(mWeakRefContext.get(), "Data is presented by DB", Toast.LENGTH_SHORT).show();
                     }
-
+                    break;
+                case 3:
+                    if (mWeakRefContext != null && mWeakRefContext.get() != null) {
+                        coinAdaptor.setData(coins);
+                        coinAdaptor.notifyDataSetChanged();
+                        Toast.makeText(mWeakRefContext.get(), "DB is updated", Toast.LENGTH_SHORT).show();
+                        refreshDb(coinAdaptor.getData());
+                    }
                     break;
             }
             refreshLayout.setRefreshing(false);

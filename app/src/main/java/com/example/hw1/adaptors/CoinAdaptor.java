@@ -48,7 +48,7 @@ public class CoinAdaptor extends RecyclerView.Adapter<CoinAdaptor.ViewHolder> {
         holder.coin1WChange.setText("7d: " + String.format("%.3f", coin.percentageChange_7d) + "%");
         Glide.with(context)
                 .load(coin.imgUrl)
-                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(holder.coinImage);
         if (coin.percentageChange_1h >= 0) {
             holder.coin1HChange.setTextColor(context.getResources().getColor(R.color.green));

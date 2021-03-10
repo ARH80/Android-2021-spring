@@ -140,14 +140,10 @@ public class CoinService {
                     JSONObject data = root.getJSONObject("data");
                     for (Coin coin : coins) {
                         coin.imgUrl = data.getJSONObject(String.valueOf(coin.id)).getString("logo");
-                        try {
-                            URL url = new URL(coin.imgUrl);
-                            Bitmap image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                            coin.setBitmapAsByteArray(image);
-                        } catch(IOException e) {
-                            System.out.println(e);
-                        }
                     }
+                    Message message = new Message();
+                    message.what = 3;
+                    uiHandler.sendMessage(message);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
