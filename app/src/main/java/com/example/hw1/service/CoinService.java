@@ -46,7 +46,7 @@ public class CoinService {
         this.coinsToBeShown += 10;
     }
 
-    public void getNewCoins() {
+    public void getNewCoins(boolean add) {
         String url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest";
         HttpUrl.Builder httpBuilder = HttpUrl.parse(url).newBuilder();
         HttpUrl httpUrl = httpBuilder.addQueryParameter("start", "1")
@@ -99,6 +99,8 @@ public class CoinService {
                 Message message = new Message();
                 message.obj = response;
                 message.what = 1;
+                if (add)
+                    message.arg1 = 1;
                 uiHandler.sendMessage(message);
             }
         });

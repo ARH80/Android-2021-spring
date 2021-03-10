@@ -31,11 +31,11 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
     private ArrayList<Coin> coins = new ArrayList<>();
     private UiHandler mHandler;
     private ThreadPoolExecutor executorPool;
-    private Button moreCoinsButton;
     private CoinService coinService;
     private CoinAdaptor coinAdaptor;
     private DataBaseManager dbManager;
     private SwipeRefreshLayout refreshLayout;
+    private boolean canScroll = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,24 +47,29 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
         this.coinAdaptor = new CoinAdaptor(coins, this, this);
         coinsRecyclerView.addItemDecoration(new DividerItemDecoration(coinsRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
         coinsRecyclerView.setAdapter(coinAdaptor);
-
         this.executorPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
         this.mHandler = new UiHandler();
         this.mHandler.setContext(this);
-        this.moreCoinsButton = findViewById(R.id.moreCoinsBtn);
         this.coinService = new CoinService(this, mHandler, this);
         this.dbManager = DataBaseManager.getInstance(this, mHandler, this);
-        moreCoinsButton.setOnClickListener(view -> addMoreCoins());
         refreshLayout = findViewById(R.id.swiperefresh);
-        refreshLayout.setOnRefreshListener(this::reload);
-
+        refreshLayout.setOnRefreshListener(() -> reload(false));
         readFromDb();
+        coinsRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (!recyclerView.canScrollVertically(1) && canScroll) {
+                    canScroll = false;
+                    addMoreCoins();
+                }
+            }
+        });
     }
 
-    public void reload() {
+    public void reload(boolean add) {
         refreshLayout.setRefreshing(true);
-        moreCoinsButton.setEnabled(false);
-        executorPool.execute(() -> coinService.getNewCoins());
+        executorPool.execute(() -> coinService.getNewCoins(add));
     }
 
     public void refreshDb(ArrayList<Coin> coins) {
@@ -80,14 +85,14 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
 
     public void addMoreCoins() {
         coinService.addMoreCoins();
-        reload();
+        reload(true);
     }
 
     @Override
     public void onClick(int position) {
         Intent myIntent = new Intent(MainActivity.this, CoinActivity.class);
         myIntent.putExtra("position", position);
-        myIntent.putExtra("symbol", coins.get(position).getSymbol());
+        myIntent.putExtra("symbol", coins.get(position).symbol);
         MainActivity.this.startActivity(myIntent);
     }
 
@@ -112,16 +117,12 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
                         readFromDb();
                     }
                     break;
-                case 0:
-                    if (mWeakRefContext != null && mWeakRefContext.get() != null) {
-                        Toast.makeText(mWeakRefContext.get(), "DB is empty reload pls", Toast.LENGTH_SHORT).show();
-                    }
-                    break;
                 case 1:
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
                         coinAdaptor.setData(coins);
                         coinAdaptor.notifyDataSetChanged();
-                        Toast.makeText(mWeakRefContext.get(), "Coins are updated", Toast.LENGTH_SHORT).show();
+                        if (msg.arg1 != 1)
+                            Toast.makeText(mWeakRefContext.get(), "Coins are updated", Toast.LENGTH_SHORT).show();
                         refreshDb(coinAdaptor.getData());
                     }
                     break;
@@ -130,20 +131,18 @@ public class MainActivity extends AppCompatActivity implements CoinAdaptor.OnCoi
                         sortDb(coins, coins.size());
                         coinAdaptor.setData(coins);
                         coinAdaptor.notifyDataSetChanged();
-                        Toast.makeText(mWeakRefContext.get(), "Data is presented by DB", Toast.LENGTH_SHORT).show();
                     }
                     break;
                 case 3:
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
                         coinAdaptor.setData(coins);
                         coinAdaptor.notifyDataSetChanged();
-                        Toast.makeText(mWeakRefContext.get(), "DB is updated", Toast.LENGTH_SHORT).show();
                         refreshDb(coinAdaptor.getData());
                     }
                     break;
             }
             refreshLayout.setRefreshing(false);
-            moreCoinsButton.setEnabled(true);
+            canScroll = true;
         }
     }
 
