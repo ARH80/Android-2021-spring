@@ -1,5 +1,6 @@
 package com.example.hw1;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -22,6 +23,7 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.CandleData;
 import com.github.mikephil.charting.data.CandleDataSet;
 import com.github.mikephil.charting.data.CandleEntry;
+import com.github.mikephil.charting.formatter.DefaultAxisValueFormatter;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -38,6 +40,7 @@ public class CoinActivity extends AppCompatActivity {
     private String symbol;
     private Range range = Range.oneMonth;
     private CandleStickChart candleStickChart;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +65,9 @@ public class CoinActivity extends AppCompatActivity {
         candleService = new CandleService(this, handler, this);
         executorPool.execute(() -> candleService.getCandles(symbol, range));
 
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("getting data....");
+        progressDialog.show();
     }
 
     private void onChartPeriodChange(Range actionRange) {
@@ -87,7 +93,6 @@ public class CoinActivity extends AppCompatActivity {
         candleStickChart.requestDisallowInterceptTouchEvent(true);
 
         XAxis xAxis = candleStickChart.getXAxis();
-
         xAxis.setDrawGridLines(false);// disable x axis grid lines
         xAxis.setDrawLabels(false);
         rightAxis.setTextColor(Color.WHITE);
@@ -118,6 +123,7 @@ public class CoinActivity extends AppCompatActivity {
                 case -1:
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
                         Toast.makeText(mWeakRefContext.get(), "Couldn't reach server", Toast.LENGTH_SHORT).show();
+                        progressDialog.dismiss();
                     }
                     break;
                 case 1:
@@ -137,6 +143,7 @@ public class CoinActivity extends AppCompatActivity {
 
                     candleStickChart.setData(data);
                     candleStickChart.invalidate();
+                    progressDialog.dismiss();
                     break;
             }
             weekBtn.setEnabled(true);
